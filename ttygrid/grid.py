@@ -15,7 +15,7 @@ class Cell:
 # X = cols
 
 class Grid:
-    COLOR_MAP = {
+    COLORS = {
         '0': "green",
         '1': "black",
         '2': "yellow",
@@ -23,7 +23,8 @@ class Grid:
         '4': "light_yellow",
     }
 
-    def __init__(self, rows=80, cols=40, mode="fit", grid=None):
+    def __init__(self, rows=80, cols=40, mode="fit", color_map=COLORS):
+        self.color_map = color_map
         if mode not in ['fit', 'custom']:
             raise ValueError(f"Mode must be 'custom' or 'fit', '{mode}' is not a valid mode")
         if not self.are_positive_ints(rows, cols):
@@ -34,10 +35,10 @@ class Grid:
             self.cols = cols
             self.rows = rows
         
-        self.cell_map = self.gen_cell_map(self.rows, self.cols, grid)
+        self.cell_map = self.gen_cell_map(self.rows, self.cols)
 
     def get_color(self, symb):
-        return self.COLOR_MAP.get(symb)
+        return self.color_map.get(symb)
 
     def __str__(self): #TODO
         lines = []

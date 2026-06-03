@@ -1,13 +1,11 @@
 import random
-import os
 import time
-from termcolor import colored
-from ttygrid import Grid, Cell
+from ttygrid import Grid
 
 def main():
     grid = Grid()
     while True:
-        cells = grid.get_all_cells(empty=True)
+        cells = grid.get_all_cells()
         for cell in cells:
             cell.symb = random.choice(['0', '1'])
             grid.draw_cells(cell)

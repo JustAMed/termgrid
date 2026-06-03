@@ -1,6 +1,6 @@
 # ttygrid
-ttygrid is a WIP grid based system for terminal-based grid simulations.
-[ttygrid on PyPi](https://pypi.org/project/ttygrid/)
+ttygrid is a grid-based framework for building terminal simulations, games, and visualizations.
+- [ttygrid on PyPi](https://pypi.org/project/ttygrid/)
 
 ## Features
 - Grid class and cell class
@@ -12,15 +12,42 @@ ttygrid is a WIP grid based system for terminal-based grid simulations.
 ## Quick Start Guide
 You can install `ttygrid` using pip using:
 
-``pip install ttygrid`` 
+```
+pip install ttygrid
+```
 
 Alternatively, you could use:
 
-``pip3 install ttygrid``
+```
+pip3 install ttygrid
+```
 
 Once installed, import with
 
-`from ttygrid import Grid, Cell`
+```
+from ttygrid import Grid, Cell
+```
+
+## Example
+```
+import random
+import time
+from ttygrid import Grid
+
+def main():
+    grid = Grid()
+    while True:
+        cells = grid.get_all_cells(empty=True)
+        for cell in cells:
+            cell.symb = random.choice(['0', '1'])
+            grid.draw_cells(cell)
+        grid.clear_term()
+        print(grid)
+        time.sleep(0.1)
+
+if __name__ == "__main__":
+    main()
+```
 
 ## Documentation
 ### Grid()
@@ -49,7 +76,7 @@ COLORS = {
     }
 ```
 ---
-### __str__()
+### __str__() (Grid)
 ```
 print(grid)
 ```
@@ -63,23 +90,103 @@ show_size(grid)
 ```
 
 Prints the number of Lines (rows) and Columns (cols) in the grid. To get them programmatically, use grid.rows and grid.cols instead.
+
 ---
 ### clear_term()
 ```
 clear_term()
 ```
 
-Clears the grid. Should be used in conjunction with print()
+Clears the terminal. Typically used before printing new frames.
+
 ---
 ### get_cell()
 ```
 get_cell(col, row)
 ```
 
-Returns the value of the cell located at the coordinates (col, row)
-Raises ValueEroor if cell does not exist.
+Returns the Cell object located at the coordinates (col, row)
+Raises ValueError if cell does not exist.
+
+---
+### validate_cell()
+```
+validate_cell(cell)
+```
+
+Raises ValueError if cell coordinates not found in grid
+
+---
+### get_all_cells()
+```
+get_all_cells(empty=True)
+```
+
+Get a list of all cells in the grid. 
+If `empty` is True, empty cells are also included.
+If `empty` is False, empty cells are not included.
+The default value is True
+
+---
+### draw_cells()
+```
+draw_cells(*cells)
+```
+
+Draws all valid cells passed as arguments onto the grid.
+
+---
+### clear()
+```
+clear()
+```
+
+Clears the grid (resets it to all cells being None)
+
+---
+### redraw_frame()
+```
+redraw_frame(cell_map)
+```
+
+The grid is redrawn using `cell_map`.
+Effectively, the value of the grid is now `cell_map`.
+A `cell_map` value not made of cells or having irregular sides compared to original grid.rows and grid.cols, results in undefined behaviour.
+It is best to first call `get_all_cells()` and pass in modified values of the call to `redraw_frame()`
+
 ---
 
+## Cell Class
 
+### Cell()
+```
+Cell(x, y, symb=None)
+```
+Args:
+
+- x - the x (col) position of the Cell
+- y - the y (row) position of the Cell
+- symb - the symbol represented by the cell. A value of None indicates an empty cell.
+---
+### __str__()
+```
+print(cell)
+```
+
+Prints the cell position and symbol
+
+---
+
+## Known Issues
+
+- Extra newline after print (Scheduled to be fixed in v0.2)
+
+---
+
+## Roadmap
+
+- Drawing primitives
+- Demos
+- Customizable status bar for simulation
 
 

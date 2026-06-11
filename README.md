@@ -1,6 +1,7 @@
 # ttygrid
 ttygrid is a grid-based framework for building terminal simulations, games, and visualizations.
 - [ttygrid on PyPi](https://pypi.org/project/ttygrid/)
+![TTYGrid Demo](assets/showcase.gif)
 
 ## Features
 - Grid class and cell class

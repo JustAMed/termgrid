@@ -2,29 +2,39 @@ from termcolor import colored
 import shutil
 
 class Cell:
-    def __init__(self, x, y, symb=None):
+    def __init__(self, x, y, symb=None, metadata=None):
         self.x = x
         self.y = y
         self.symb = symb
+        if metadata:
+            self.metadata = metadata
+        else:
+            self.metadata = {}
+            self.metadata['color'] = 'white'
     
     def __str__(self):
         return f"{self.symb} at ({self.x}, {self.y})"
+    
+    def get_metadata(self, field=None):
+        if field:
+            if self.metadata[field]:
+                return self.metadata[field]
+            return None
+        return self.metadata
+    
+    def set_metadata(self, field, parameter):
+        self.metadata[field] = parameter
 
     
 # Y = rows
 # X = cols
 
 class Grid:
-    COLORS = {
-        '0': "green",
-        '1': "black",
-        '2': "yellow",
-        '3': "blue",
-        '4': "light_yellow",
-    }
 
-    def __init__(self, rows=80, cols=40, mode="fit", color_map=COLORS):
-        self.color_map = color_map
+    def __str__(self):
+        return self.render()
+
+    def __init__(self, rows=80, cols=40, mode="fit"):
         if mode not in ['fit', 'custom']:
             raise ValueError(f"Mode must be 'custom' or 'fit', '{mode}' is not a valid mode")
         if not self.are_positive_ints(rows, cols):
@@ -38,22 +48,7 @@ class Grid:
         self.cell_map = self.gen_cell_map(self.rows, self.cols)
 
     def get_color(self, symb):
-        return self.color_map.get(symb)
-
-    def __str__(self): #TODO
-        lines = []
-        for y in range(self.rows):
-            line = []
-            for x in range(self.cols):
-                cell = self.cell_map[(x, y)]
-                color = self.get_color(cell.symb)
-                if color:
-                    line.append(colored(cell.symb, color))
-                else:
-                    line.append(cell.symb or " ")
-            lines.append("".join(line))
-        return "\n".join(lines)
-                                
+        return self.color_map.get(symb)                      
 
     def show_size(self):
         print(f"Lines: {self.rows}\nColumns: {self.cols}")
@@ -111,3 +106,21 @@ class Grid:
                 cell_map[(x, y)] = Cell(x, y, None)
 
         return cell_map
+
+    def default_render(self, cell):
+        return cell.get_metadata('color')
+
+    def render(self, render_function=default_render):
+        lines = []
+        for y in range(self.rows):
+            line = []
+            for x in range(self.cols):
+                cell = self.cell_map[(x, y)]
+                color = render_function(self, cell)
+                if color:
+                    line.append(colored(cell.symb, color))
+                else:
+                    line.append(cell.symb or " ")
+            lines.append("".join(line))
+        return "\n".join(lines)
+        

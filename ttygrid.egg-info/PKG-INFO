@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: ttygrid
-Version: 0.1.2
+Version: 0.1.3
 Summary: Simple terminal grid rendering library
 Author: JustMedansh
 License: MIT
@@ -21,7 +21,7 @@ ttygrid is a grid-based framework for building terminal simulations, games, and 
 - Functions to get and set cells
 - Inbuilt coloring for different symbols using `termcolor`
 - Auto adjust to terminal size using `shutil`
-##  v0.1 is out! 
+##  v0.2 is out! 
 
 ## Quick Start Guide
 You can install `ttygrid` using pip using:
@@ -50,10 +50,16 @@ from ttygrid import Grid
 
 def main():
     grid = Grid()
+    colors = {
+        '0': 'green',
+        '1': 'black',
+    }
     while True:
-        cells = grid.get_all_cells(empty=True)
+        cells = grid.get_all_cells()
         for cell in cells:
-            cell.symb = random.choice(['0', '1'])
+            symbol = random.choice(['0', '1'])
+            cell.symb = symbol
+            cell.set_metadata('color', colors[symbol])
             grid.draw_cells(cell)
         grid.clear_term()
         print(grid)
@@ -67,7 +73,7 @@ if __name__ == "__main__":
 ### Grid()
 
  ```
- Grid(rows=80, cols=40, mode="fit", grid=None, color_map=COLORS)
+ Grid(rows=80, cols=40, mode="fit", grid=None)
  ```
 
 Creates a new ttygrid grid instance that can be manipulated using the library.
@@ -79,16 +85,13 @@ Creates a new ttygrid grid instance that can be manipulated using the library.
 
 - `mode` (str) - Can be either "fit" or "custom" (case-sensitive). If mode is "custom", the dimensions of the grid are given through `rows` and `cols`. If mode is "fit", the dimensions are given through `shutil.get_terminal_size()`, with `rows` and `cols` as fallback. Default value "fit"
 
-- `color_map` (dict[str, str]) - A dict with keys as cell symbols and values as colors recognized by `termcolor.colored()`. The default value is:
+---
+### render()
 ```
-COLORS = {
-        '0': "green",
-        '1': "black",
-        '2': "yellow",
-        '3': "blue",
-        '4': "light_yellow",
-    }
+def render(render_function=default_render)
 ```
+
+Returns the rendered table. Pass in a render_function to customize rendering. By default, the color is the color field in cell metadata.
 ---
 ### __str__() (Grid)
 ```
@@ -174,13 +177,15 @@ It is best to first call `get_all_cells()` and pass in modified values of the ca
 
 ### Cell()
 ```
-Cell(x, y, symb=None)
+Cell(x, y, symb=None, metadata=None)
 ```
 Args:
 
 - x - the x (col) position of the Cell
 - y - the y (row) position of the Cell
 - symb - the symbol represented by the cell. A value of None indicates an empty cell.
+- metadata - the metadata associated with the cell. by default, only one field, 'color' is present, set to white.
+
 ---
 ### __str__()
 ```
@@ -188,6 +193,22 @@ print(cell)
 ```
 
 Prints the cell position and symbol
+
+---
+### get_metadata()
+```
+get_metadata(field=None)
+```
+
+Sets a specific field. If field is None, returns the metadata dictionary
+
+---
+### set_metadata()
+```
+set_metadata(field, parameter)
+```
+
+Sets a specific metadata field.
 
 ---
 
